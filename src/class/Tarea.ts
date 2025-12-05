@@ -1,8 +1,9 @@
 import { PRIORIDAD, ESTADO } from "../lib/constantes";
 import { fechaToString } from "../lib/funciones";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Tarea {
-    private _id: number = 0;
+    private _id: string = '';
     private _titulo: string;
     private _descripcion: string;
     private _prioridad: string;
@@ -13,12 +14,19 @@ export class Tarea {
 
     // ----------------------------------------- Constructor -----------------------------------------
 
-    constructor(_titulo: string, _descripcion: string, _prioridad: typeof PRIORIDAD[number], _estado: typeof ESTADO[number], _fechaCreacion: Date | null, _fechaVencimiento: Date, _fechaUltimaEdicion: Date | null) {
+    constructor(_titulo: string, _descripcion: string, _prioridad: typeof PRIORIDAD[number], _estado: typeof ESTADO[number], _fechaCreacion: Date | null, _fechaVencimiento: Date, _fechaUltimaEdicion: Date | null, id?: string) {
         let day: Date = new Date();
         this._titulo = _titulo;
         this._descripcion = _descripcion;
         this._prioridad = _prioridad;
         this._estado = _estado;
+
+        // Assign a unique id: use provided id (when loading from file) or generate a new UUID
+        if (id && id.trim() !== '') {
+            this._id = id;
+        } else {
+            this._id = uuidv4();
+        }
 
         if (_fechaCreacion === null) {
             this._fechaCreacion = new Date(fechaToString(day.getFullYear().toString(), (day.getMonth() + 1).toString(), day.getDate().toString()) + "T03:00:00Z");
@@ -39,7 +47,7 @@ export class Tarea {
 
     // ----------------------------------------- Setters -----------------------------------------
 
-    setId(id: number): void { this._id = id; }
+    setId(id: string): void { this._id = id; }
     setTitulo(titulo: string): void { this._titulo = titulo; }
     setDescripcion(descripcion: string): void { this._descripcion = descripcion; }
     setPrioridad(prioridad: typeof PRIORIDAD[number]): void { this._prioridad = prioridad; }
@@ -49,7 +57,7 @@ export class Tarea {
 
     // ----------------------------------------- Getters -----------------------------------------
 
-    getId(): number { return this._id; }
+    getId(): string { return this._id; }
     getTitulo(): string { return this._titulo; }
     getDescripcion(): string { return this._descripcion; }
     getPrioridad(): typeof PRIORIDAD[number] { return this._prioridad; }

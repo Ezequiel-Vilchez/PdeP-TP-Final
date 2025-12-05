@@ -14,6 +14,7 @@ function menuPrincipal(): void {
     console.log('[1] Mostrar tareas');
     console.log('[2] Agregar tarea');
     console.log('[3] Buscar tarea');
+    console.log('[4] Eliminar tarea');
     console.log('[0] Salir\n');
     console.log('----------------------------------\n');
     console.log('Ingrese una opción.\n');
@@ -36,6 +37,7 @@ interface TareaJSON {
     descripcion: string;
     prioridad: string;
     estado: string;
+    id?: string;
     fechaCreacion: string;
     fechaUltimaEdicion: string;
     fechaVencimiento: string;
@@ -86,6 +88,7 @@ async function cargarTareasDesdeArchivo(): Promise<Tarea[]> {
                 fechaCreacion,
                 fechaVencimiento,
                 fechaUltimaEdicion
+                , item.id
             );
             
             tareasConvertidas.push(nuevaTarea);
@@ -103,6 +106,7 @@ async function guardarTareasEnArchivo(listaTareas: Tarea[]): Promise<void> {
     try {
         const datosAGuardar = listaTareas.map(unaTarea => {
             return {
+                id: unaTarea.getId(),
                 titulo: unaTarea.getTitulo(),
                 descripcion: unaTarea.getDescripcion(),
                 prioridad: unaTarea.getPrioridad(),
@@ -156,8 +160,8 @@ async function main(): Promise<void> {
                 console.clear();
                 let opcionTareasAVer: number;
                 let arregloTareasFiltradas: Tarea[] = [];
-                let idTareaAVer: number;
-                let idVerMasDetalles: number[] = [];
+                let idTareaAVer: string;
+                let idVerMasDetalles: string[] = [];
                 let sePuedeVerLaTarea: boolean;
                 let opcionQuiereEditar: number;
                 let quiereEditar: boolean;
@@ -214,7 +218,7 @@ async function main(): Promise<void> {
                                 console.log('\n-----------------------------------------------------------------------------------\n');
                             }
                             console.log('Ingrese el ID de la tarea que desea ver en detalle.\n\n');
-                            idTareaAVer = parseInt(await input('> '), 10);
+                            idTareaAVer = (await input('> ')).trim();
                             sePuedeVerLaTarea = false;
                             for (let id of idVerMasDetalles) {
                                 if (id === idTareaAVer) {
@@ -656,6 +660,55 @@ async function main(): Promise<void> {
                 await input('\nPresione "Enter" para continuar...');
 
                 console.clear();
+                break;
+            case 4:
+                // Eliminar tarea
+                {
+                    console.clear();
+
+                    if (miToDoList.getTareas().length === 0) {
+                        console.log("No hay tareas cargadas.\n");
+                        await input('Presione "Enter" para continuar...');
+                        console.clear();
+                        break;
+                    }
+
+                    console.log('Lista de tareas:\n');
+                    for (let tarea of miToDoList.getTareas()) {
+                        console.log(`[${tarea.getId()}] - ${tarea.getTitulo()}`);
+                    }
+
+                    console.log('\nIngrese el ID (UUID) de la tarea que desea eliminar.\n');
+                    const idAEliminar: string = (await input('> ')).trim();
+
+                    const existe = miToDoList.getTareas().some(t => t.getId() === idAEliminar);
+                    if (!existe) {
+                        console.log('\nID de tarea no válido. Operación cancelada.\n');
+                        await input('Presione "Enter" para continuar...');
+                        console.clear();
+                        break;
+                    }
+
+                    console.log('\n¿Confirma la eliminación de la tarea?\n');
+                    console.log('[1] Sí');
+                    console.log('[2] No\n');
+                    const opcionConfirma = parseInt(await input('> '), 10);
+
+                    if (opcionConfirma === 1) {
+                        const eliminado = miToDoList.eliminarTarea(idAEliminar);
+                        if (eliminado) {
+                            await guardarTareasEnArchivo(miToDoList.getTareas());
+                            console.log('\nTarea eliminada correctamente.\n');
+                        } else {
+                            console.log('\nNo se pudo eliminar la tarea.\n');
+                        }
+                    } else {
+                        console.log('\nEliminación cancelada.\n');
+                    }
+
+                    await input('Presione "Enter" para continuar...');
+                    console.clear();
+                }
                 break;
             case 0:
                 // Salir
