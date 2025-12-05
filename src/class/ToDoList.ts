@@ -1,6 +1,6 @@
 import { Tarea } from "./Tarea";
 import { ESTADO } from "../lib/constantes";
-// import { fechaToString, comprobarFormatoAnio, comprobarFormatoMes, comprobarFormatoDia } from "../lib/funciones";
+import { mostrarDificultad } from "../lib/funciones";
 
 export class ToDoList {
     private tareas: Tarea[];
@@ -39,6 +39,7 @@ export class ToDoList {
         console.log(`Estado: ${tarea.getEstado()}`);
         console.log(`Fecha de Creación: ${tarea.getFechaCreacion().toLocaleDateString()}`);
         console.log(`Fecha de Vencimiento: ${tarea.getFechaVencimiento().toLocaleDateString()}`);
+        console.log(`Dificultad: ${mostrarDificultad(tarea.getDificultad())}`);
         console.log('\n--------------------------------------------------------------------\n');
     }
 

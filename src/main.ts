@@ -1,7 +1,7 @@
 import { PRIORIDAD, ESTADO } from "./lib/constantes";
 import { Tarea } from "./class/Tarea";
 import { ToDoList } from "./class/ToDoList";
-import { esFechaValida, comprobarFormatoAnio, comprobarFormatoMes, comprobarFormatoDia, fechaToString } from "./lib/funciones";
+import { esFechaValida, comprobarFormatoAnio, comprobarFormatoMes, comprobarFormatoDia, fechaToString, mostrarDificultad } from "./lib/funciones";
 import { input, close } from "./lib/input";
 import fs from 'fs/promises';
 import path from 'path';
@@ -782,7 +782,7 @@ async function main(): Promise<void> {
                     console.log(`\nTareas ordenadas por ${criterio} (${asc ? 'ascendente' : 'descendente'}).\n`);
                     console.log('Lista resultante:\n');
                     for (let tarea of miToDoList.getTareas()) {
-                        console.log(`[${tarea.getId()}] - ${tarea.getTitulo()} - Vencimiento: ${tarea.getFechaVencimiento().toLocaleDateString()} - Dificultad: ${tarea.getDificultad()}`);
+                        console.log(`[${tarea.getId()}] - ${tarea.getTitulo()} - Vencimiento: ${tarea.getFechaVencimiento().toLocaleDateString()} - Dificultad: ${mostrarDificultad(tarea.getDificultad())}`);
                     }
 
                     await input('\nPresione "Enter" para continuar...');
@@ -815,7 +815,7 @@ async function main(): Promise<void> {
                     for (const d of dificultades) {
                         const cantidad = cantPorDificultad[d] ?? 0;
                         const porcentaje = pctPorDificultad[d] ?? 0;
-                        console.log(`- Dificultad ${d}: ${cantidad} (${porcentaje}%)`);
+                        console.log(`- ${mostrarDificultad(d)}: ${cantidad} (${porcentaje}%)`);
                     }
 
                     console.log('\n-----------------------------------------------------\n');

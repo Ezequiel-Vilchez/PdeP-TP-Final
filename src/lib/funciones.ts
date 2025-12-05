@@ -43,3 +43,12 @@ export const stringToFecha = (anio: string, mes: string, dia: string): Date | nu
 // Función pura para formatear fecha a string legible
 export const formatearFecha = (fecha: Date): string =>
     fecha.toLocaleDateString('es-ES');
+
+// Función pura para mostrar dificultad con estrellas
+export const mostrarDificultad = (dificultad: number): string => {
+    const dificultadValida = Math.max(1, Math.min(5, dificultad));
+    const estrellasLlenas = '★'.repeat(dificultadValida);
+    const estrellasVacias = '☆'.repeat(5 - dificultadValida);
+    return `${estrellasLlenas}${estrellasVacias}`;
+};
+
