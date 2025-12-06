@@ -16,9 +16,3 @@ export function input(question: string): Promise<string> {
 export function close(): void {
     rl.close();
 }
-
-// Exportamos solo utilidades, NO el main
-module.exports = {
-    input,
-    close
-};
